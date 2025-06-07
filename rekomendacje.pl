@@ -83,9 +83,9 @@ maks_dopasowanie(Kierunek, MaxWynik) :-
     length(ZStyle, L4),
     MaxWynik is L1*WagaZ + L2*WagaP + L3*WagaC + L4*WagaS.
 
-% Top5 kierunków z procentowym dopasowaniem
+% Top5 kierunków z procentowym dopasowaniem (lista list zamiast krotek)
 top5_dopasowania(Zainteresowania, Przedmioty, Cechy, Style, Top5) :-
-    findall((Kierunek, Procent),
+    findall([Kierunek, Procent],
         (
             kierunki_studiow(Kierunek, _, _, _, _),
             dopasowanie(Kierunek, Zainteresowania, Przedmioty, Cechy, Style, Wynik),

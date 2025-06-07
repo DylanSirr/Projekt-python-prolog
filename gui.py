@@ -22,7 +22,7 @@ class KierunkiApp:
 
         # Przycisk
         self.button = tk.Button(master, text="Analizuj", command=self.analizuj)
-        self.button.pack()
+        self.button.pack(pady=10)
 
         # Wyniki
         self.results = tk.Text(master, height=10, width=50)
@@ -33,7 +33,7 @@ class KierunkiApp:
         self.prolog.consult("rekomendacje.pl")
 
     def create_checkboxes(self):
-        # Kategorie i checkboxy
+        # Kategorie i checkboxy w siatce
         categories = [('Zainteresowania', self.zainteresowania),
                       ('Przedmioty', self.przedmioty),
                       ('Cechy', self.cechy),
@@ -41,10 +41,13 @@ class KierunkiApp:
         for category_name, items in categories:
             frame = tk.LabelFrame(self.master, text=category_name)
             frame.pack(fill="x", padx=5, pady=5)
-            for item in items:
+            columns = 4  # ile kolumn checkboxów w jednym wierszu?
+            for index, item in enumerate(items):
                 var = tk.IntVar()
                 cb = tk.Checkbutton(frame, text=item, variable=var)
-                cb.pack(anchor='w')
+                row = index // columns
+                col = index % columns
+                cb.grid(row=row, column=col, sticky='w', padx=5, pady=2)
                 self.check_vars[item] = var
 
     def analizuj(self):
@@ -62,17 +65,11 @@ class KierunkiApp:
 
         if results:
             top5 = results[0]['Top5']
-            # Konwersja Prolog -> Python
-            # Wynik wygląda zwykle jak lista list: [[Kierunek, Wynik], ...]
             if isinstance(top5, list):
-                # Dla bezpieczeństwa zamieniamy ewentualny jeden wynik w listę
                 if not top5:
                     top5 = []
-                # Sprawdzamy długość
                 while len(top5) < 5:
                     top5.append(['Brak_danych', 0])
-                
-                # Wyświetlanie
                 self.results.insert(tk.END, "TOP 5 kierunków:\n\n")
                 for entry in top5:
                     if isinstance(entry, list) and len(entry) == 2:
@@ -87,5 +84,6 @@ class KierunkiApp:
 
 if __name__ == "__main__":
     root = tk.Tk()
+    root.geometry("700x700")  # kwadratowe okno
     app = KierunkiApp(root)
     root.mainloop()
