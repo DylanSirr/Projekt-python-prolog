@@ -7,7 +7,9 @@ class KierunkiApp:
         self.master = master
         master.title("Dopasowanie kierunków studiów")
 
-        # Pola wyboru
+        # Styl okna i widgetów - niebieska stylistyka
+        master.configure(bg="#e6f0ff")
+
         self.zainteresowania = [
             'programowanie', 'technologie', 'logiczne_myslenie', 'matematyka',
             'fizyka', 'eksperymentowanie', 'czytanie', 'pisanie', 'dyskusje',
@@ -15,8 +17,8 @@ class KierunkiApp:
             'sztuczna_inteligencja', 'robotyka', 'inżynieria', 'prawo',
             'sztuka', 'muzyka', 'języki_obce', 'socjologia', 'filozofia',
             'zarządzanie', 'marketing', 'geologia', 'architektura',
-            'gry_komputerowe', 'badania', 'czlowiek', 'nauka', 'innowacje',
-            'zwierzeta', 'budownictwo', 'kosmos', 'analiza'
+            'gry_komputerowe', 'badania', 'człowiek', 'nauka', 'innowacje',
+            'zwierzęta', 'budownictwo', 'kosmos', 'analiza'
         ]
 
         self.przedmioty = [
@@ -28,13 +30,13 @@ class KierunkiApp:
         ]
 
         self.cechy = [
-            'logiczne_myslenie', 'kreatywnosc', 'dokladnosc', 'ciekawosc',
+            'logiczne_myslenie', 'kreatywność', 'dokładność', 'ciekawość',
             'krytyczne_myslenie', 'analiza_danych', 'analityczne_myslenie',
-            'komunikatywnosc', 'cierpliwosc', 'odpowiedzialnosc', 'wytrwalosc',
-            'zdolnosci_organizacyjne', 'umiejetnosc_pracy_w_zespole',
-            'samodzielnosc', 'adaptacyjnosc', 'empatia', 'otwartosc_na_nowe',
-            'systematycznosc', 'abstrakcyjne_myslenie', 'przestrzenne_myslenie',
-            'obserwacja', 'odpornosc_na_stres', 'elokwencja', 'przedsiebiorczosc'
+            'komunikatywność', 'cierpliwość', 'odpowiedzialność', 'wytrwałość',
+            'zdolności_organizacyjne', 'umiejętność_pracy_w_zespole',
+            'samodzielność', 'adaptacyjność', 'empatia', 'otwartość_na_nowe',
+            'systematyczność', 'abstrakcyjne_myslenie', 'przestrzenne_myslenie',
+            'obserwacja', 'odporność_na_stres', 'elokwencja', 'przedsiębiorczość'
         ]
 
         self.style = [
@@ -42,18 +44,21 @@ class KierunkiApp:
             'laboratoria', 'czytanie', 'rozmowy', 'praca_w_grupie', 'seminaria',
             'warsztaty', 'prezentacje', 'eksperymenty', 'programowanie',
             'rozwiązywanie_problemów', 'dyskusje_debaty', 'teoria',
-            'case_studies', 'pamieciowa', 'symulacje', 'obliczenia', 'debata',
+            'case_studies', 'pamięciowa', 'symulacje', 'obliczenia', 'debata',
             'analiza'
         ]
 
         self.check_vars = {}
         self.create_checkboxes()
 
-        self.button = tk.Button(master, text="Analizuj", command=self.analizuj)
-        self.button.pack(pady=10)
+        self.button = tk.Button(master, text="Analizuj", command=self.analizuj,
+                                bg="#4a90e2", fg="white", font=("Helvetica", 12, "bold"),
+                                relief="raised", bd=3, activebackground="#357ABD")
+        self.button.pack(pady=8)
 
-        self.results = tk.Text(master, height=15, width=80)
-        self.results.pack()
+        # Pole tekstowe z mniejszą czcionką i niebieskim tłem
+        self.results = tk.Text(master, height=12, width=60, font=("Helvetica", 10), bg="#f0f6ff", fg="#003366", bd=2, relief="sunken")
+        self.results.pack(padx=10, pady=5)
 
         self.prolog = Prolog()
         self.prolog.consult("rekomendacje.pl")
@@ -64,15 +69,18 @@ class KierunkiApp:
                       ('Cechy', self.cechy),
                       ('Style', self.style)]
         for category_name, items in categories:
-            frame = tk.LabelFrame(self.master, text=category_name)
-            frame.pack(fill="x", padx=5, pady=5)
-            columns = 8  # Zmieniamy na 8 kolumn
+            frame = tk.LabelFrame(self.master, text=category_name, bg="#e6f0ff", fg="#003366",
+                                  font=("Helvetica", 11, "bold"))
+            frame.pack(fill="x", padx=5, pady=3)
+            columns = 6
             for index, item in enumerate(items):
                 var = tk.IntVar()
-                cb = tk.Checkbutton(frame, text=item, variable=var)
+                cb = tk.Checkbutton(frame, text=item, variable=var, bg="#e6f0ff", fg="#003366",
+                                    activebackground="#cce0ff", activeforeground="#002244",
+                                    font=("Helvetica", 9))
                 row = index // columns
                 col = index % columns
-                cb.grid(row=row, column=col, sticky='w', padx=5, pady=2)
+                cb.grid(row=row, column=col, sticky='w', padx=6, pady=3)
                 self.check_vars[item] = var
 
     def analizuj(self):
@@ -95,7 +103,8 @@ class KierunkiApp:
                 for entry in top5:
                     if isinstance(entry, list) and len(entry) == 2:
                         kierunek, wynik = entry
-                        self.results.insert(tk.END, f"{kierunek}: {round(wynik*10,1)} punktów\n")
+                        wynik_zaokraglony = round(wynik, 2)
+                        self.results.insert(tk.END, f"{kierunek}: {wynik_zaokraglony} punktów dopasowania\n")
                     else:
                         self.results.insert(tk.END, "Błąd w strukturze danych.\n")
             else:
@@ -103,8 +112,9 @@ class KierunkiApp:
         else:
             self.results.insert(tk.END, "Brak wyników z Prologa.\n")
 
+
 if __name__ == "__main__":
     root = tk.Tk()
-    root.geometry("1400x1000")
+    root.geometry("1100x1000")
     app = KierunkiApp(root)
     root.mainloop()
